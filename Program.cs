@@ -22,15 +22,19 @@ rootCommand.AddOption(durationOption);
 
 rootCommand.SetHandler(async (host, duration) =>
 {
-    int i32Port = 2001;
-    int i32TimeoutMs = 1000;
+    int port = 2001;
+    int timeoutMs = 1000;
     OptoMMP mmp = new();
-    int connectResult = mmp.Open(host, i32Port, OptoMMP.Connection.Tcp, i32TimeoutMs, true);
-    int writeResult = mmp.EpicWriteDigitalState(1, 1, true);
+    int connectResult = mmp.Open(host, port, OptoMMP.Connection.Tcp, timeoutMs, true);
+
+    _ = mmp.EpicWriteDigitalState(1, 1, true);
+
     await Task.Delay(duration).ContinueWith(t =>
     {
         mmp.EpicWriteDigitalState(1, 1, false);
     });
+
+    mmp.Close();
 },
 hostOption, durationOption);
 
